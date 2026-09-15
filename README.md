@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-306998?style=flat-square) ![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas%20Vector%20Search-47A248?style=flat-square) ![Streamlit](https://img.shields.io/badge/Streamlit-interface-FF4B4B?style=flat-square) ![Sentence Transformers](https://img.shields.io/badge/Sentence%20Transformers-embeddings-4B5563?style=flat-square) ![Groq](https://img.shields.io/badge/Groq-r%C3%A9ponse%20LLM-EA580C?style=flat-square)
 
-Un projet de bout en bout : **collecter des bons plans, les transformer en vecteurs, puis les retrouver par leur sens**. Une interface Streamlit permet de chercher en langage naturel, de limiter le budget et d’obtenir une synthèse générée à partir des résultats.
+Un projet de bout en bout : **collecter des bons plans, les transformer en vecteurs, puis les retrouver par leur sens**. Le dépôt contient aussi une interface Streamlit pour la recherche en langage naturel et la synthèse des résultats.
 
 ```text
 API Dealabs → exports JSON → préparation + embeddings → MongoDB Atlas → Streamlit
@@ -17,11 +17,9 @@ API Dealabs → exports JSON → préparation + embeddings → MongoDB Atlas →
 | `src/dealabs_pipeline/` | Préparation des documents, embeddings et index vectoriel. |
 | `src/dealabs/` | Client de l’API Dealabs, adapté de [IDerr/dealabs-api](https://github.com/IDerr/dealabs-api). |
 | `data/raw/` | Six exports JSON du projet (13 799 entrées avant dédoublonnage). |
-| `martial_app/` | Interface Streamlit et logique de recherche ; chemin conservé pour le déploiement. |
+| `martial_app/` | Code de l’interface Streamlit et de la recherche. |
 
-## Essayer
-
-**[Ouvrir la démo Streamlit](https://martial-dealabs-raggit-dq2ot2gjjmgdq83mwhmoj2.streamlit.app/)** · La plateforme peut mettre l’application en veille après une période d’inactivité.
+## Lancer en local
 
 Pour lancer le projet en local, il faut Python 3.11+, un cluster MongoDB Atlas et une clé Groq pour la synthèse. La commande d’indexation crée l’index `vector_index` sur `embedding` (384 dimensions) :
 
