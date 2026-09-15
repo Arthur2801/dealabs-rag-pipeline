@@ -1,12 +1,15 @@
 # Dealabs · pipeline data & recherche sémantique
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-306998?style=flat-square) ![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas%20Vector%20Search-47A248?style=flat-square) ![Streamlit](https://img.shields.io/badge/Streamlit-interface-FF4B4B?style=flat-square) ![Sentence Transformers](https://img.shields.io/badge/Sentence%20Transformers-embeddings-4B5563?style=flat-square) ![Groq](https://img.shields.io/badge/Groq-r%C3%A9ponse%20LLM-EA580C?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.11%2B-306998?style=flat-square) ![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas%20Vector%20Search-47A248?style=flat-square) ![Streamlit](https://img.shields.io/badge/Streamlit-interface-FF4B4B?style=flat-square) ![Sentence Transformers](https://img.shields.io/badge/Sentence%20Transformers-embeddings-4B5563?style=flat-square) ![Groq](https://img.shields.io/badge/Groq-LLM%20inference-EA580C?style=flat-square)
 
-Un projet de bout en bout : **collecter des bons plans, les transformer en vecteurs, puis les retrouver par leur sens**. Le dépôt contient aussi une interface Streamlit pour la recherche en langage naturel et la synthèse des résultats.
+**[Dealabs](https://www.dealabs.com/)** est une plateforme communautaire où les membres publient, commentent et évaluent des bons plans. Ce projet extrait ces offres via l’API Dealabs, prépare les données et génère des **embeddings** multilingues, puis les indexe dans **MongoDB Atlas Vector Search** (vector DB).
+
+Pour une recherche en langage naturel, le pipeline convertit la requête en embedding, retrouve les offres les plus proches et applique un filtre de prix. Le dépôt comprend une interface **Streamlit** pour consulter les résultats et, si **Groq** est configuré, produire une synthèse **RAG** avec un LLM à partir des offres retrouvées.
 
 ```text
-API Dealabs → exports JSON → préparation + embeddings → MongoDB Atlas → Streamlit
-                                                             ↘ réponse via Groq
+Ingestion  Dealabs API → JSON → préparation → embeddings → MongoDB Atlas Vector Search
+Recherche requête + budget → embedding → vector search → offres pertinentes → Streamlit
+Synthèse  offres retrouvées → Groq (LLM) → réponse
 ```
 
 ## Ce que contient le dépôt
