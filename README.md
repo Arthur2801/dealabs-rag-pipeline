@@ -4,7 +4,7 @@
 
 **[Dealabs](https://www.dealabs.com/)** est une plateforme communautaire où les membres publient, commentent et évaluent des bons plans. Ce projet extrait ces offres via l’API Dealabs, prépare les données et génère des **embeddings** multilingues, puis les indexe dans **MongoDB Atlas Vector Search** (vector DB).
 
-Pour une recherche en langage naturel, le pipeline convertit la requête en embedding, retrouve les offres les plus proches et applique un filtre de prix. Le dépôt comprend une interface **Streamlit** pour consulter les résultats et, si **Groq** est configuré, produire une synthèse **RAG** avec un LLM à partir des offres retrouvées.
+Pour une recherche en langage naturel, le pipeline convertit la requête en embedding, retrouve les offres les plus proches et applique un filtre de prix. Le dépôt comprend une interface **Streamlit** pour consulter les résultats et poduit une synthèse **RAG** avec un LLM à partir des offres retrouvées.
 
 ```text
 Ingestion  Dealabs API → JSON → préparation → embeddings → MongoDB Atlas Vector Search
@@ -22,9 +22,6 @@ Synthèse  offres retrouvées → Groq (LLM) → réponse
 | `data/raw/` | Six exports JSON du projet (13 799 entrées avant dédoublonnage). |
 | `martial_app/` | Code de l’interface Streamlit et de la recherche. |
 
-## Lancer en local
-
-Pour lancer le projet en local, il faut Python 3.11+, un cluster MongoDB Atlas et une clé Groq pour la synthèse. La commande d’indexation crée l’index `vector_index` sur `embedding` (384 dimensions) :
 
 ```bash
 python -m pip install -e ".[app,pipeline]"
