@@ -1,142 +1,60 @@
-"""
-Module d'internationalisation (i18n) pour Dealabs Smart Search.
-Contient les traductions pour français, anglais et espagnol.
-"""
+"""Libellés de l'interface Streamlit."""
 
-# Dictionnaire de traductions
-LANG_NAMES = {"fr": "Français", "en": "English", "es": "Español"}
+LANGUAGES = {"Français": "fr", "English": "en", "Español": "es"}
 
-# Traductions complètes pour l'interface
-TRANSLATIONS = {
+TEXT = {
     "fr": {
-        # Titres et sections
-        "assistant_analysis": "🤖 Analyse de l'Assistant",
-        "alternative_suggestions": "💡 Suggestions Alternatives",
-        "predictive_analysis": "🤖 Analyse Prédictive IA",
-        "relevant_deals": "Deal(s) Pertinent(s)",
-        "similar_suggestions": "🔍 Suggestion(s) Similaire(s)",
-        # Messages informatifs
-        "deals_found": "deal(s) pertinent(s) trouvé(s) pour votre recherche",
-        "no_exact_deal": "Aucun deal exact trouvé. Voici des suggestions similaires qui pourraient vous intéresser :",
-        "analyzing": "Analyse en cours...",
-        "error_llm": "Erreur lors de la génération de la réponse :",
-        "no_new_deals": "🔮 Aucun nouveau deal prometteur détecté pour cette recherche. Essayez de désactiver le Mode Anticipation pour voir tous les résultats.",
-        "no_results": "Aucun deal ne correspond. Vérifiez l'index vectoriel Atlas.",
-        # Métadonnées des deals
-        "temp": "Temp",
-        "status": "Statut",
-        "new": "Nouveau",
-        "old": "Ancien",
-        "relevance": "Pertinence",
-        "no_reviews": "Pas d'avis",
-        "prediction_ml": "Prédiction ML",
-        "reliability": "Fiabilité",
-        # Prédictions
-        "hot": "CHAUD",
-        "cold": "FROID",
-        "potential": "Potentiel",
-        "deal_number": "Deal #",
-        # Actions
-        "view_details": "Voir les détails et la description complète",
-        "get_deal": "🚀 PROFITER DE L'OFFRE SUR LE SITE",
-        "link_unavailable": "ℹ️ Lien indisponible",
+        "title": "Recherche sémantique de bons plans",
+        "subtitle": "Décrivez votre besoin : la recherche compare le sens de votre demande aux bons plans indexés.",
+        "query": "Que cherchez-vous ?",
+        "placeholder": "Ex. un ordinateur portable pour monter des vidéos",
+        "budget": "Budget maximum (€)",
+        "search": "Rechercher",
+        "loading": "Recherche des bons plans…",
+        "results": "Résultats",
+        "summary": "Synthèse",
+        "open": "Voir le bon plan",
+        "details": "Description",
+        "no_results": "Aucun bon plan trouvé pour cette recherche et ce budget.",
+        "search_error": "La recherche est indisponible. Vérifiez la connexion MongoDB et l'index vectoriel.",
+        "summary_error": "La synthèse n'a pas pu être générée ; les résultats restent disponibles.",
+        "category": "Catégorie",
+        "score": "Score de similarité",
     },
     "en": {
-        # Titles and sections
-        "assistant_analysis": "🤖 Assistant Analysis",
-        "alternative_suggestions": "💡 Alternative Suggestions",
-        "predictive_analysis": "🤖 AI Predictive Analysis",
-        "relevant_deals": "Relevant Deal(s)",
-        "similar_suggestions": "🔍 Similar Suggestion(s)",
-        # Informative messages
-        "deals_found": "relevant deal(s) found for your search",
-        "no_exact_deal": "No exact deal found. Here are similar suggestions that might interest you:",
-        "analyzing": "Analyzing...",
-        "error_llm": "Error generating response:",
-        "no_new_deals": "🔮 No new promising deals detected for this search. Try disabling Anticipation Mode to see all results.",
-        "no_results": "No matching deals. Check Atlas vector index.",
-        # Deal metadata
-        "temp": "Temp",
-        "status": "Status",
-        "new": "New",
-        "old": "Old",
-        "relevance": "Relevance",
-        "no_reviews": "No reviews",
-        "prediction_ml": "ML Prediction",
-        "reliability": "Reliability",
-        # Predictions
-        "hot": "HOT",
-        "cold": "COLD",
-        "potential": "Potential",
-        "deal_number": "Deal #",
-        # Actions
-        "view_details": "View details and full description",
-        "get_deal": "🚀 GET THE DEAL ON THE SITE",
-        "link_unavailable": "ℹ️ Link unavailable",
+        "title": "Semantic deal search",
+        "subtitle": "Describe what you need: the search compares your request with indexed deals by meaning.",
+        "query": "What are you looking for?",
+        "placeholder": "E.g. a laptop for video editing",
+        "budget": "Maximum budget (€)",
+        "search": "Search",
+        "loading": "Searching deals…",
+        "results": "Results",
+        "summary": "Summary",
+        "open": "View deal",
+        "details": "Description",
+        "no_results": "No deals found for this search and budget.",
+        "search_error": "Search is unavailable. Check the MongoDB connection and vector index.",
+        "summary_error": "The summary could not be generated; the results are still available.",
+        "category": "Category",
+        "score": "Similarity score",
     },
     "es": {
-        # Títulos y secciones
-        "assistant_analysis": "🤖 Análisis del Asistente",
-        "alternative_suggestions": "💡 Sugerencias Alternativas",
-        "predictive_analysis": "🤖 Análisis Predictivo IA",
-        "relevant_deals": "Oferta(s) Relevante(s)",
-        "similar_suggestions": "🔍 Sugerencia(s) Similar(es)",
-        # Mensajes informativos
-        "deals_found": "oferta(s) relevante(s) encontrada(s) para tu búsqueda",
-        "no_exact_deal": "No se encontró ninguna oferta exacta. Aquí hay sugerencias similares que podrían interesarte:",
-        "analyzing": "Analizando...",
-        "error_llm": "Error al generar la respuesta:",
-        "no_new_deals": "🔮 No se detectaron nuevas ofertas prometedoras para esta búsqueda. Intenta desactivar el Modo Anticipación para ver todos los resultados.",
-        "no_results": "Ninguna oferta coincide. Verifica el índice vectorial Atlas.",
-        # Metadatos de ofertas
-        "temp": "Temp",
-        "status": "Estado",
-        "new": "Nuevo",
-        "old": "Antiguo",
-        "relevance": "Relevancia",
-        "no_reviews": "Sin opiniones",
-        "prediction_ml": "Predicción ML",
-        "reliability": "Fiabilidad",
-        # Predicciones
-        "hot": "CALIENTE",
-        "cold": "FRÍO",
-        "potential": "Potencial",
-        "deal_number": "Oferta #",
-        # Acciones
-        "view_details": "Ver detalles y descripción completa",
-        "get_deal": "🚀 APROVECHAR LA OFERTA EN EL SITIO",
-        "link_unavailable": "ℹ️ Enlace no disponible",
+        "title": "Búsqueda semántica de ofertas",
+        "subtitle": "Describe lo que necesitas: la búsqueda compara tu petición con las ofertas indexadas por significado.",
+        "query": "¿Qué buscas?",
+        "placeholder": "Ej. un portátil para editar vídeos",
+        "budget": "Presupuesto máximo (€)",
+        "search": "Buscar",
+        "loading": "Buscando ofertas…",
+        "results": "Resultados",
+        "summary": "Resumen",
+        "open": "Ver oferta",
+        "details": "Descripción",
+        "no_results": "No hay ofertas para esta búsqueda y presupuesto.",
+        "search_error": "La búsqueda no está disponible. Comprueba MongoDB y el índice vectorial.",
+        "summary_error": "No se pudo generar el resumen; los resultados siguen disponibles.",
+        "category": "Categoría",
+        "score": "Puntuación de similitud",
     },
 }
-
-
-def get_language_name(lang_code):
-    """Retourne le nom de la langue."""
-    return LANG_NAMES.get(lang_code, "Français")
-
-
-def get_translation(lang_code, key):
-    """
-    Retourne la traduction pour une clé donnée.
-
-    Args:
-        lang_code (str): Code de langue (fr, en, es)
-        key (str): Clé de traduction
-
-    Returns:
-        str: Texte traduit ou clé si traduction non trouvée
-    """
-    return TRANSLATIONS.get(lang_code, TRANSLATIONS["fr"]).get(key, key)
-
-
-def get_all_translations(lang_code):
-    """
-    Retourne toutes les traductions pour une langue.
-
-    Args:
-        lang_code (str): Code de langue (fr, en, es)
-
-    Returns:
-        dict: Dictionnaire de traductions
-    """
-    return TRANSLATIONS.get(lang_code, TRANSLATIONS["fr"])

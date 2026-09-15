@@ -1,62 +1,37 @@
+# Dealabs · pipeline data & recherche sémantique
 
-# Titre: Assistant Intelligent Dealabs
+![Python](https://img.shields.io/badge/Python-3.11%2B-306998?style=flat-square) ![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas%20Vector%20Search-47A248?style=flat-square) ![Streamlit](https://img.shields.io/badge/Streamlit-interface-FF4B4B?style=flat-square) ![Sentence Transformers](https://img.shields.io/badge/Sentence%20Transformers-embeddings-4B5563?style=flat-square) ![Groq](https://img.shields.io/badge/Groq-r%C3%A9ponse%20LLM-EA580C?style=flat-square)
 
-# Description du projet
-Cette application est un assistant de recherche intelligent utilisant l'architecture RAG (Retrieval-Augmented Generation). Contrairement à une recherche classique par mots-clés, cet outil utilise la recherche sémantique pour comprendre l'intention de l'utilisateur et interroger une base de données vectorielle MongoDB Atlas.
+Un projet de bout en bout : **collecter des bons plans, les transformer en vecteurs, puis les retrouver par leur sens**. Une interface Streamlit permet de chercher en langage naturel, de limiter le budget et d’obtenir une synthèse générée à partir des résultats.
 
+```text
+API Dealabs → exports JSON → préparation + embeddings → MongoDB Atlas → Streamlit
+                                                             ↘ réponse via Groq
+```
 
-## Déploiement Cloud
-L'application est officiellement déployée et accessible pour test via le lien suivant : 👉 https://martial-dealabs-raggit-dq2ot2gjjmgdq83mwhmoj2.streamlit.app/
-## Fonctionnalités
-- Recherche Sémantique : Capacité à trouver des produits par concept (ex: "ordinateur pour montage vidéo" au lieu de "PC 16Go RAM").
+## Ce que contient le dépôt
 
-- Filtrage Hybride : Affinage des résultats par budget (curseur de prix) et par catégories dynamiques.
+| Dossier | Rôle |
+| --- | --- |
+| `scripts/` | Extraction par lots et chargement dans MongoDB Atlas. |
+| `src/dealabs_pipeline/` | Préparation des documents, embeddings et index vectoriel. |
+| `src/dealabs/` | Client de l’API Dealabs, adapté de [IDerr/dealabs-api](https://github.com/IDerr/dealabs-api). |
+| `data/raw/` | Six exports JSON du projet (13 799 entrées avant dédoublonnage). |
+| `martial_app/` | Interface Streamlit et logique de recherche ; chemin conservé pour le déploiement. |
 
-- Interface Intuitive : Développée avec Streamlit pour une expérience utilisateur fluide.
+## Essayer
 
-- Accès Direct : Boutons de redirection vers les sites marchands intégrés à chaque article.
-## Architecture Technique
-- Base de Données : MongoDB Atlas avec Vector Search Index.
+**[Ouvrir la démo Streamlit](https://martial-dealabs-raggit-dq2ot2gjjmgdq83mwhmoj2.streamlit.app/)** · La plateforme peut mettre l’application en veille après une période d’inactivité.
 
-- Modèle d'Embedding : sentence-transformers/all-MiniLM-L6-v2 (Hugging Face).
+Pour lancer le projet en local, il faut Python 3.11+, un cluster MongoDB Atlas et une clé Groq pour la synthèse. La commande d’indexation crée l’index `vector_index` sur `embedding` (384 dimensions) :
 
-- Backend : Python 3.11+ avec LangChain pour l'orchestration.
+```bash
+python -m pip install -e ".[app,pipeline]"
+cp .env.example .env      # renseigner MONGO_URI et GROQ_API_KEY
+python scripts/index_deals.py --create-index
+streamlit run martial_app/app.py
+```
 
-- Frontend : Streamlit.
+Le chargement lit `data/raw/` par défaut. L’option `--reset` efface la collection avant l’insertion ; elle doit être demandée explicitement. Pour les options d’extraction et d’indexation, voir [le guide du pipeline](docs/pipeline.md).
 
-- Industrialisation : Projet prêt pour la conteneurisation via Docker.
-## Configuration pour les Développeurs
-
-1. Variables d'environnement
-Pour faire tourner le projet localement, créez un fichier .env :
-
-MONGO_URI=mongodb+srv://<votre_user>:<votre_password>@cluster0.ou16sxf.mongodb.net/
-
-
-Note : Pour la version déployée, ces identifiants sont gérés via les Secrets de Streamlit Cloud.
-
-2. Index de recherche Atlas
-L'index sur MongoDB doit être nommé vector_index et configurer le champ embedding avec 384 dimensions.
-## Installation Locale
-
-1. Cloner la branche : 
-git checkout <ma-branche-de-travail> (Bash)
-
-2. Installer les dépendances :
-pip install -r requirements.txt (Bash)
-
-3. Lancer l'application :
-streamlit run app.py (Bash)
-## Schéma des Métadonnées (Mapping)
-
-- embedding: Vecteurs IA (384 dim)
-- group_display_summary: Catégories utilisées pour le filtrage
-- price: Prix numérique pour le filtrage par budget
-- url: Lien source pour la redirection
-- text: Description complète de l'article
-## Authors
-
-- Arthur
-- Martial
-- Yassine
-
+**Équipe :** [Arthur](https://github.com/Arthur2801), [Martial](https://github.com/GuyMartial24) et [Yassine](https://github.com/yassine-571).
