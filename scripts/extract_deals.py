@@ -14,11 +14,15 @@ Auteur: Projet Master Big Data
 Date: Janvier 2026
 """
 
-from dealabs import Dealabs
+import argparse
 import json
+import os
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 # --- FONCTION WORKER POUR RÉCUPÉRATION DES COMMENTAIRES ---
@@ -38,6 +42,8 @@ def fetch_deal_comments(deal):
     """
     # Chaque thread crée sa propre connexion.
     # Cela évite que les threads se bloquent entre eux sur une session partagée.
+    from dealabs import Dealabs
+
     local_client = Dealabs()
 
     thread_id = deal.get("thread_id") or deal.get("id")
@@ -50,7 +56,7 @@ def fetch_deal_comments(deal):
     return str(thread_id), deal
 
 
-def main():
+def main(limit: int, workers: int, output_dir: Path):
     """
     Fonction principale pour l'extraction en masse de deals depuis Dealabs.
 
@@ -69,17 +75,19 @@ def main():
         None (sauvegarde les deals dans des fichiers JSON)
     """
     # Instance principale du client Dealabs pour lister les pages
+    from dealabs import Dealabs
+
     main_client = Dealabs()
 
     # --- CONFIGURATION DE L'EXTRACTION ---
-    nb_deals_to_fetch = 100000  # Nombre total de deals à extraire
+    nb_deals_to_fetch = limit
     batch_size_pages = 50  # Nombre de pages par batch de sauvegarde
     per_page = 50  # Deals par page (standard Dealabs)
 
     # --- VITESSE ---
     # Puisque chaque worker a son client, vous pouvez monter plus haut.
     # Essayez 20. Si erreurs 429/Ban, redescendez à 10.
-    MAX_WORKERS = 30
+    MAX_WORKERS = workers
     # ---------------------
 
     batch_deals = []
@@ -88,6 +96,8 @@ def main():
     pages_in_current_batch = 0
     file_part = 1
     batch_id = 1
+    output_dir.mkdir(parents=True, exist_ok=True)
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
 
     global_start_time = time.time()
     batch_start_time = time.time()
@@ -155,7 +165,7 @@ def main():
                             )
 
                 # 4. ÉCRITURE
-                filename = f"deals_dump_part_{file_part}.json"
+                filename = output_dir / f"deals_{run_id}_part_{file_part}.json"
                 with open(filename, "w", encoding="utf-8") as f:
                     json.dump(deals_by_thread_id, f, ensure_ascii=False, indent=2)
 
@@ -192,4 +202,16 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Extraire les deals et leurs commentaires")
+    parser.add_argument("--limit", type=int, default=500)
+    parser.add_argument("--workers", type=int, default=10)
+    parser.add_argument("--output-dir", type=Path, default=PROJECT_ROOT / "data" / "raw")
+    args = parser.parse_args()
+    if args.limit < 1 or args.workers < 1:
+        parser.error("--limit et --workers doivent être supérieurs à zéro")
+    from dotenv import load_dotenv
+
+    load_dotenv(PROJECT_ROOT / ".env")
+    if not os.getenv("DEALABS_CLIENT_KEY") or not os.getenv("DEALABS_CLIENT_SECRET"):
+        parser.error("Renseigner DEALABS_CLIENT_KEY et DEALABS_CLIENT_SECRET dans .env")
+    main(args.limit, args.workers, args.output_dir)

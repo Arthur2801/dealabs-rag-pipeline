@@ -18,12 +18,11 @@ Date: Janvier 2026
 """
 
 import json
-import random
 import time
 import os
 import glob
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -65,13 +64,13 @@ class Config:
         batch_size (int): Taille des batches pour l'insertion
     """
 
-    model_id: str = "sentence-transformers/all-MiniLM-L6-v2"
+    model_id: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     embedding_dims: int = 384
     mongo_uri: str = os.getenv("MONGO_URI", "")
     db_name: str = "deals_db"
     collection_name: str = "deals"
     index_name: str = "vector_index"
-    data_dir: str = str(PROJECT_ROOT / "data" / "newdeals")
+    data_dir: str = str(PROJECT_ROOT / "data" / "raw")
     batch_size: int = 50
 
 
@@ -249,10 +248,10 @@ class DealProcessor:
             return None
 
         max_likes = max(c.get("reaction_counters", {}).get("like", 0) for c in comments)
-        best_comments = [
+        best_comment = next(
             c for c in comments if c.get("reaction_counters", {}).get("like", 0) == max_likes
-        ]
-        return random.choice(best_comments).get("content_unformatted")
+        )
+        return best_comment.get("content_unformatted")
 
     @staticmethod
     def parse_price(price) -> Optional[float]:
@@ -345,12 +344,14 @@ class MigrationPipeline:
         self.mongo_client = MongoDBClient(config)
         self.deal_processor = DealProcessor(self.embedding_service)
 
-    def run(self, reset: bool = True, create_index: bool = True):
+    def run(self, reset: bool = False, create_index: bool = False):
         print("Migration vers MongoDB Atlas")
 
         print(f"\nChargement des fichiers depuis {self.config.data_dir}...")
         data = DataLoader.load_all_deals(self.config.data_dir)
         print(f"Total: {len(data)} deals chargés")
+        if not data:
+            raise ValueError(f"Aucun deal trouvé dans {self.config.data_dir}")
 
         if reset:
             print("\nPréparation de la base de données...")
@@ -403,9 +404,3 @@ class MigrationPipeline:
 
         print()
         return indexed, failed
-
-
-if __name__ == "__main__":
-    config = Config()
-    pipeline = MigrationPipeline(config)
-    pipeline.run()

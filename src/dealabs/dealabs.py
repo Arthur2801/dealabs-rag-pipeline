@@ -1,3 +1,5 @@
+import os
+
 import requests
 from requests_oauthlib import OAuth1
 from .constants import *
@@ -7,8 +9,12 @@ from .models import Deal, Thread, Comment
 class Dealabs:
 
     def __init__(self):
-        self.client_key = "539f008401dbb"
-        self.client_secret = "539f008401e9c"
+        self.client_key = os.getenv("DEALABS_CLIENT_KEY")
+        self.client_secret = os.getenv("DEALABS_CLIENT_SECRET")
+        if not self.client_key or not self.client_secret:
+            raise RuntimeError(
+                "DEALABS_CLIENT_KEY et DEALABS_CLIENT_SECRET sont requis pour l'extraction"
+            )
         self.headers = {
             "User-Agent": "com.dealabs.apps.android ANDROID [v7.19.00] [22 | SM-G930K] [@2.0x]",
             "Pepper-Include-Counters": "unread_alerts",
@@ -19,9 +25,9 @@ class Dealabs:
         }
         self.oauth = OAuth1(self.client_key, client_secret=self.client_secret)
 
-    def request(self, url, method="GET", params={}):
+    def request(self, url, method="GET", params=None):
         r = requests.request(
-            method=method, url=url, params=params, headers=self.headers, auth=self.oauth
+            method=method, url=url, params=params or {}, headers=self.headers, auth=self.oauth
         ).json()
         return r
 
